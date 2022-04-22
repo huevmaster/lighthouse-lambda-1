@@ -1,5 +1,5 @@
 
-reportBucket: 'lighthouse-reports' # Name of the bucket to upload Lighthouse checks to
+reportBucket: 'lighthouse-reports-gaia' # Name of the bucket to upload Lighthouse checks to
 
 chrome:
   flags:

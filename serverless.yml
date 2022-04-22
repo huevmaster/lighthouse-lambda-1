@@ -13,13 +13,13 @@ custom: ${file(./config.yml)}
 #
 # Happy Coding!
 
-service: serverless-lighthouse-lambda # NOTE: update this with your service name
+service: serverless-lighthouse-lambda-gaia # NOTE: update this with your service name
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs14.x
   stage: ${opt:stage, 'dev'}
-  region: eu-west-1
+  region: us-east-1
   timeout: 3
   iamRoleStatements:
   - Effect: Allow
