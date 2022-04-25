@@ -17,7 +17,7 @@ service: serverless-lighthouse-lambda-gaia # NOTE: update this with your service
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs12.x
   stage: ${opt:stage, 'dev'}
   region: us-east-1
   timeout: 3
