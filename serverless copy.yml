@@ -1,0 +1,67 @@
+custom: ${file(./config.yml)}
+
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: serverless-lighthouse-lambda-gaia # NOTE: update this with your service name
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  timeout: 3
+  iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - lambda:InvokeFunction
+      - lambda:InvokeAsync
+    Resource: "*"
+  - Effect: Allow
+    Action: 
+      - s3:PutObject
+      - s3:PutObjectAcl
+    Resource: "arn:aws:s3:::${self:custom.reportBucket}/*"
+  environment:
+    REPORT_BUCKET: ${self:custom.reportBucket}
+    REPORT_BUCKET_URL: https://s3.${self:provider.region}.amazonaws.com/${self:provider.environment.REPORT_BUCKET}/
+    # DEBUG: '*' # WARNING: Dubug currently causes an issue with serverless-plugin-chrome 
+
+plugins:
+  - serverless-plugin-chrome
+
+functions:
+  main:
+    handler: handler.main
+    memorySize: 128
+    events: # All events associated with this function
+      - http:
+          method: get
+          path: '/check'
+    environment:
+      LIGHTHOUSE_FUNC: ${self:service}-${self:provider.stage}-lighthouse # Provides a reference to the bellow function
+  lighthouse:
+    handler: lighthouse.main
+    memorySize: 512
+    timeout: 60
+
+
+resources:
+  Resources:
+    reportBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.REPORT_BUCKET}
+        AccessControl: PublicRead
+        WebsiteConfiguration:
+          IndexDocument: index.html
